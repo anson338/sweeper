@@ -59,7 +59,6 @@ isOutdated = function(x,y)
 	if(isProxy(x,y))
 	{	
 	var id = getTileId(x,y)
-	//console.log("(",x,y,")is:",id)
 	neighbors = getNeighbors(x,y)
 	nearbyDangers = neighbors.filter(isDangerous)
 	//console.log("neighbors_ filtered", nearbyDangers)
@@ -83,36 +82,28 @@ snipe = function()
 {
 	var w = sweeper.playGrid.width
 	var h = sweeper.playGrid.height
-	for(i = 0; i < w; i++)
-		{
-			for(j = 0; j < h; j++)
-			{
-				if(isProxy(i,j))
-				{
+	for(i = 0; i < w; i++) {
+			for(j = 0; j < h; j++) {
+				if(isProxy(i,j)) {
 					//console.log("proxy")
-					if(isOutdated(i,j))
-					{
-					gold = getHiddenNeighbors(i,j)
-						if(gold.length > 0)
-						{
+					if(isOutdated(i,j)) {
+						gold = getHiddenNeighbors(i,j)
+						if(gold.length > 0) {
 							oldscore = me.points
 							gold.forEach(function(obj)
 							{
 								sweeper.revealCell(obj.x,obj.y,sweeper.localPlayerId)
-								//for debugging
-								if(oldscore > me.points)
-								{
-									//console.log("lost score at: ", obj, getTileId(obj.x, obj.y))
-								}	
-								else if(oldscore == me.points)
-								{
-									//console.log("no points gained:", obj, getTileId(obj.x, obj.y))
-								}
-								else
-								{
-									//console.log("", obj, getTileId(obj.x, obj.y))
-								}
-								//end of debugging
+							})
+							return true
+						}
+					} else {
+						// Must be bomb then flag it.
+						gold = getHiddenNeighbors(i,j)
+						if(gold.length == 1){
+							
+							gold.forEach(function(obj)
+							{
+								sweeper.placeFlag(obj.x,obj.y)
 							})
 							return true
 						}
@@ -125,6 +116,5 @@ snipe = function()
 
 sweep = function(seconds=1)
 {
-
 	window.setInterval(snipe, seconds*1000);
 }
